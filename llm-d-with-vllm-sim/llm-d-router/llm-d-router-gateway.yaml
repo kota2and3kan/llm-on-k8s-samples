@@ -1,0 +1,21 @@
+provider:
+  name: "none"
+
+router:
+  modelServers:
+    matchLabels:
+      app: "vllm-sim"
+  epp:
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "2000m"
+        memory: "2Gi"
+
+httpRoute:
+  create: true
+  inferenceGatewayName: "inference-gateway"
+  inferenceGatewayNamespace: "llm-d"
+
