@@ -349,7 +349,8 @@ kubectl delete \
   -n llm-d
 ```
 ```console
-helm uninstall llm-d-router-gateway -n llm-d
+helm uninstall llm-d-router-gateway \
+  -n llm-d
 ```
 ```console
 kubectl delete \
