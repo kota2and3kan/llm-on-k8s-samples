@@ -1,0 +1,22 @@
+provider:
+  name: "none"
+
+router:
+  modelServers:
+    matchLabels:
+      app: "vllm-smollm2-135m"
+  epp:
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+      limits:
+        cpu: "2000m"
+        memory: "2Gi"
+    flags:
+      refresh-metrics-interval: 1000ms
+
+httpRoute:
+  create: true
+  inferenceGatewayName: "inference-gateway"
+  inferenceGatewayNamespace: "llm-d"

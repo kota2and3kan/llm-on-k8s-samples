@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-smollm2-135m
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vllm-smollm2-135m
+  template:
+    metadata:
+      labels:
+        app: vllm-smollm2-135m
+        llm-d.ai/engine-type: vllm
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: vllm
+          image: "vllm/vllm-openai-cpu:v0.32.0"
+          imagePullPolicy: IfNotPresent
+          command: ["vllm", "serve"]
+          args:
+          - "HuggingFaceTB/SmolLM2-135M-Instruct"
+          - "--port"
+          - "8000"
+          - "--max-model-len"
+          - "8192"
+          - "--enforce-eager"
+          env:
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "1"
+            - name: HF_HOME
+              value: "/data"
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          startupProbe:
+            failureThreshold: 240
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+             limits:
+               cpu: "2000m"
+               memory: "4Gi"
+               ephemeral-storage: "2Gi"
+             requests:
+               cpu: "2000m"
+               memory: "4Gi"
+               ephemeral-storage: "2Gi"
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /dev/shm
+              name: shm
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: vllm-hf-cache
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
