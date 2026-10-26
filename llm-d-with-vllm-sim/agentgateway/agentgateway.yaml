@@ -1,0 +1,7 @@
+inferenceExtension:
+  enabled: true
+gatewayClassParametersRefs:
+  agentgateway:
+    name: "clusterip-by-default"
+    namespace: "agentgateway-system"
+
