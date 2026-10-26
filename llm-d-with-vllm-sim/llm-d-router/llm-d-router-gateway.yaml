@@ -13,6 +13,8 @@ router:
       limits:
         cpu: "2000m"
         memory: "2Gi"
+    flags:
+      refresh-metrics-interval: 1000ms
 
 httpRoute:
   create: true

@@ -58,7 +58,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 1. Deploy vLLM simulator.
 
     ```console
-    kubectl apply -f ./vllm/vllm-sim.yaml -n llm-d
+    kubectl apply \
+      -f ./vllm/vllm-sim.yaml \
+      -n llm-d
     ```
 
     ```console
@@ -100,7 +102,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 1. Deploy CRDs for Gateway API and Gateway API Inference Extension.
 
     ```console
-    kubectl apply -f ./gateway-api/gateway-api.yaml -f ./gateway-api/gateway-api-inference-extension.yaml
+    kubectl apply \
+      -f ./gateway-api/gateway-api.yaml \
+      -f ./gateway-api/gateway-api-inference-extension.yaml
     ```
 
 ### Deploy agentgateway as implementation of Gateway (GatewayClass)
@@ -118,7 +122,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 1. Deploy a default configuration for agentgateway.
 
     ```console
-    kubectl apply -f ./agentgateway/agentgateway-parameters.yaml -n agentgateway-system
+    kubectl apply \
+      -f ./agentgateway/agentgateway-parameters.yaml \
+      -n agentgateway-system
     ```
 
 1. Deploy agentgateway.
@@ -136,7 +142,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 1. Deploy Gateway.
 
     ```console
-    kubectl apply -f ./gateway-api/gateway.yaml -n llm-d
+    kubectl apply \
+      -f ./gateway-api/gateway.yaml \
+      -n llm-d
     ```
 
     ```console
@@ -224,7 +232,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 1. Deploy a client pod.
 
     ```console
-    kubectl apply -f ./client/client.yaml -n llm-d
+    kubectl apply \
+      -f ./client/client.yaml \
+      -n llm-d
     ```
 
     ```console
@@ -326,25 +336,37 @@ Create a sample LLM infrastructure on Kubernetes with:
 ## Delete the sample deployment
 
 ```console
-kubectl delete -f ./client/client.yaml -n llm-d
+kubectl delete \
+  -f ./client/client.yaml \
+  -n llm-d
 ```
 ```console
-helm uninstall llm-d-router-gateway -n llm-d
+helm uninstall llm-d-router-gateway \
+  -n llm-d
 ```
 ```console
-kubectl delete -f ./gateway-api/gateway.yaml -n llm-d
+kubectl delete \
+  -f ./gateway-api/gateway.yaml \
+  -n llm-d
 ```
 ```console
-kubectl delete -f ./agentgateway/agentgateway-parameters.yaml -n agentgateway-system
+kubectl delete \
+  -f ./agentgateway/agentgateway-parameters.yaml \
+  -n agentgateway-system
 ```
 ```console
-helm uninstall -n agentgateway-system agentgateway agentgateway-crds
+helm uninstall agentgateway agentgateway-crds \
+  -n agentgateway-system
 ```
 ```console
-kubectl delete -f ./gateway-api/gateway-api.yaml -f ./gateway-api/gateway-api-inference-extension.yaml
+kubectl delete \
+  -f ./gateway-api/gateway-api.yaml \
+  -f ./gateway-api/gateway-api-inference-extension.yaml
 ```
 ```console
-kubectl delete -f ./vllm/vllm-sim.yaml -n llm-d
+kubectl delete \
+  -f ./vllm/vllm-sim.yaml \
+  -n llm-d
 ```
 ```console
 kubectl delete ns agentgateway-system llm-d
