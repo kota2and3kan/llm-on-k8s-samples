@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+spec:
+  containers:
+    - name: ubuntu
+      image: ubuntu:26.04
+      env:
+        - name: DEBIAN_FRONTEND
+          value: noninteractive
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          apt-get update && \
+          apt-get install -y --no-install-recommends curl jq ca-certificates && \
+          rm -rf /var/lib/apt/lists/* && \
+          touch /tmp/ready && \
+          exec sleep infinity
+      readinessProbe:
+        exec:
+          command: ["test", "-f", "/tmp/ready"]
+        periodSeconds: 5
+  terminationGracePeriodSeconds: 0
+
