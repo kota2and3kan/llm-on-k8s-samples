@@ -1,0 +1,39 @@
+providers:
+  default: openAI
+  openAI:
+    provider: OpenAI
+    model: "HuggingFaceTB/SmolLM2-135M-Instruct"
+    apiKeySecretRef: kagent-openai
+    apiKeySecretKey: OPENAI_API_KEY
+    config:
+      baseUrl: "http://inference-gateway.llm-d.svc.cluster.local/llm-d/smollm2-135m/v1"
+
+database:
+  postgres:
+    bundled:
+      enabled: true
+
+k8s-agent:
+  enabled: false
+kagent-tools:
+  enabled: false
+grafana-mcp:
+  enabled: false
+kgateway-agent:
+  enabled: false
+istio-agent:
+  enabled: false
+promql-agent:
+  enabled: false
+observability-agent:
+  enabled: false
+argo-rollouts-agent:
+  enabled: false
+helm-agent:
+  enabled: false
+cilium-policy-agent:
+  enabled: false
+cilium-manager-agent:
+  enabled: false
+cilium-debug-agent:
+  enabled: false
