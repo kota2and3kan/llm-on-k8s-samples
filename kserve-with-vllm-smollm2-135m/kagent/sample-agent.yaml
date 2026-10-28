@@ -1,0 +1,11 @@
+apiVersion: kagent.dev/v1alpha2
+kind: Agent
+metadata:
+  name: sample-agent
+  namespace: kagent
+spec:
+  type: Declarative
+  declarative:
+    modelConfig: default-model-config
+    systemMessage: |
+      You are a sample agent who accesses the vLLM SmolLM2-135M-Instruct in a local k8s environment.
