@@ -9,3 +9,7 @@ See [README](./llm-d-with-vllm-sim/README.md) in the `./llm-d-with-vllm-sim/` di
 ## llm-d with vLLM and SmolLM2-135M-Instruct
 
 See [README](./llm-d-with-vllm-smollm2-135m/README.md) in the `./llm-d-with-vllm-smollm2-135m/` directory.
+
+## KServe with vLLM and SmolLM2-135M-Instruct
+
+See [README](./kserve-with-vllm-smollm2-135m/README.md) in the `./kserve-with-vllm-smollm2-135m/` directory.
