@@ -1,4 +1,4 @@
-# llm-d with vLLM simulator
+# llm-d with vLLM Simulator
 
 Create a sample LLM infrastructure on Kubernetes with:
 
@@ -53,9 +53,9 @@ Create a sample LLM infrastructure on Kubernetes with:
     kubectl create ns llm-d
     ```
 
-### Deploy vLLM simulator
+### Deploy vLLM Simulator
 
-1. Deploy vLLM simulator.
+1. Deploy vLLM Simulator.
 
     ```console
     kubectl apply \
@@ -114,8 +114,8 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     helm install agentgateway-crds \
       oci://cr.agentgateway.dev/charts/agentgateway-crds \
-      --create-namespace \
       --namespace agentgateway-system \
+      --create-namespace \
       --version v1.6.0
     ```
 
@@ -189,7 +189,7 @@ Create a sample LLM infrastructure on Kubernetes with:
     helm install llm-d-router-gateway \
       oci://ghcr.io/llm-d/charts/llm-d-router-gateway \
       --namespace llm-d \
-      --values llm-d-router/llm-d-router-gateway.yaml \
+      --values ./llm-d-router/llm-d-router-gateway.yaml \
       --version v1.0.0
     ```
 
@@ -271,7 +271,6 @@ Create a sample LLM infrastructure on Kubernetes with:
     +---------------------------------------------------------+
     ```
 
-
 ### Run sample requests
 
 1. Run a shell in the client pod.
@@ -297,7 +296,7 @@ Create a sample LLM infrastructure on Kubernetes with:
         "max_tokens": 50
       }' | jq
     ```
-    Note: The vLLM simulator returns a random predefined sentence. The actual inference is not done in this environment.
+    Note: The vLLM Simulator returns a random predefined sentence. The actual inference is not done in this environment.
 
     ```console
     +--[Kubernetes]-------------------------------------------+
@@ -341,7 +340,8 @@ kubectl delete \
   -n llm-d
 ```
 ```console
-helm uninstall llm-d-router-gateway \
+helm uninstall \
+  llm-d-router-gateway \
   -n llm-d
 ```
 ```console
@@ -355,7 +355,9 @@ kubectl delete \
   -n agentgateway-system
 ```
 ```console
-helm uninstall agentgateway agentgateway-crds \
+helm uninstall \
+  agentgateway \
+  agentgateway-crds \
   -n agentgateway-system
 ```
 ```console
@@ -369,5 +371,7 @@ kubectl delete \
   -n llm-d
 ```
 ```console
-kubectl delete ns agentgateway-system llm-d
+kubectl delete ns \
+  agentgateway-system \
+  llm-d
 ```

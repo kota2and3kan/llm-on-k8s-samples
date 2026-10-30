@@ -68,12 +68,13 @@ Create a sample LLM infrastructure on Kubernetes with:
 1. Deploy cert-manager as a dependency of KServe.
 
     ```console
-    helm install \
-      cert-manager oci://quay.io/jetstack/charts/cert-manager \
-      --version v1.21.3 \
+    helm install cert-manager \
+      oci://quay.io/jetstack/charts/cert-manager \
       --namespace cert-manager \
       --create-namespace \
-      --set crds.enabled=true
+      --set crds.enabled=true \
+      --set crds.keep=false \
+      --version v1.21.3
     ```
 
 ### Deploy CRDs for Gateway API and Gateway API Inference Extension
@@ -93,8 +94,8 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     helm install agentgateway-crds \
       oci://cr.agentgateway.dev/charts/agentgateway-crds \
-      --create-namespace \
       --namespace agentgateway-system \
+      --create-namespace \
       --version v1.6.0
     ```
 
@@ -198,7 +199,7 @@ Create a sample LLM infrastructure on Kubernetes with:
       oci://ghcr.io/kserve/charts/kserve-runtime-configs \
       --namespace kserve \
       --set kserve.llmisvcConfigs.enabled=true \
-      --version v0.21.0 
+      --version v0.21.0
     ```
 
     ```console
@@ -550,17 +551,17 @@ kubectl delete \
 ```console
 helm uninstall \
   kserve-runtime-configs \
-  -n kserve 
+  -n kserve
 ```
 ```console
 helm uninstall \
   kserve-llmisvc-resources \
-  -n kserve 
+  -n kserve
 ```
 ```console
 helm uninstall \
   kserve-llmisvc-crd \
-  -n kserve 
+  -n kserve
 ```
 ```console
 kubectl delete \
