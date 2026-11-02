@@ -53,6 +53,12 @@ Create a sample LLM infrastructure on Kubernetes with:
     kubectl create ns llm-d
     ```
 
+1. Verify that the namespace `llm-d` is created.
+
+    ```console
+    kubectl get ns llm-d
+    ```
+
 ### Deploy vLLM Simulator
 
 1. Deploy vLLM Simulator.
@@ -60,6 +66,14 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     kubectl apply \
       -f ./vllm/vllm-sim.yaml \
+      -n llm-d
+    ```
+
+1. Verify that 3 pods are deployed.
+
+    ```console
+    kubectl get pod \
+      -l app=vllm-sim \
       -n llm-d
     ```
 
@@ -107,6 +121,23 @@ Create a sample LLM infrastructure on Kubernetes with:
       -f ./gateway-api/gateway-api-inference-extension.yaml
     ```
 
+1. Verify that CRDs are created.
+
+    ```console
+    kubectl api-resources \
+      --api-group=gateway.networking.k8s.io
+    ```
+
+    ```console
+    kubectl api-resources \
+      --api-group=inference.networking.k8s.io
+    ```
+
+    ```console
+    kubectl api-resources \
+      --api-group=inference.networking.x-k8s.io
+    ```
+
 ### Deploy agentgateway as implementation of Gateway (GatewayClass)
 
 1. Deploy CRDs for agentgateway.
@@ -119,6 +150,13 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v1.6.0
     ```
 
+1. Verify that CRDs are created.
+
+    ```console
+    kubectl api-resources \
+      --categories=agentgateway
+    ```
+
 1. Deploy a default configuration for agentgateway.
 
     ```console
@@ -127,7 +165,15 @@ Create a sample LLM infrastructure on Kubernetes with:
       -n agentgateway-system
     ```
 
-1. Deploy agentgateway.
+1. Verify that agentgatewayparameters is created.
+
+    ```console
+    kubectl get agentgatewayparameters \
+      clusterip-by-default \
+      -n agentgateway-system
+    ```
+
+1. Deploy an agentgateway controller.
 
     ```console
     helm install agentgateway \
@@ -137,6 +183,13 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v1.6.0
     ```
 
+1. Verify that the agentgateway controller is deployed.
+
+    ```console
+    kubectl get pod \
+      -n agentgateway-system
+    ```
+
 ### Deploy Gateway
 
 1. Deploy Gateway.
@@ -144,6 +197,20 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     kubectl apply \
       -f ./gateway-api/gateway.yaml \
+      -n llm-d
+    ```
+
+1. Verify that gateway and agentgateway pod are deployed.
+
+    ```console
+    kubectl get gateway \
+      inference-gateway \
+      -n llm-d
+    ```
+
+    ```console
+    kubectl get pod \
+      -l app.kubernetes.io/name=inference-gateway \
       -n llm-d
     ```
 
@@ -181,9 +248,9 @@ Create a sample LLM infrastructure on Kubernetes with:
     +---------------------------------------------------------+
     ```
 
-### Deploy EPP (Endpoint Picker) and InferencePool
+### Deploy EPP (Endpoint Picker), InferencePool, and HTTPRoute
 
-1. Deploy EPP (Endpoint Picker) and InferencePool.
+1. Deploy EPP (Endpoint Picker), InferencePool, and HTTPRoute.
 
     ```console
     helm install llm-d-router-gateway \
@@ -191,6 +258,26 @@ Create a sample LLM infrastructure on Kubernetes with:
       --namespace llm-d \
       --values ./llm-d-router/llm-d-router-gateway.yaml \
       --version v1.0.0
+    ```
+
+1. Verify that EPP (Endpoint Picker), InferencePool, and HTTPRoute are deployed.
+
+    ```console
+    kubectl get pod \
+      -l llm-d-router-gateway=llm-d-router-gateway-epp \
+      -n llm-d
+    ```
+
+    ```console
+    kubectl get inferencepool \
+      llm-d-router-gateway \
+      -n llm-d
+    ```
+
+    ```console
+    kubectl get httproute \
+      llm-d-router-gateway \
+      -n llm-d
     ```
 
     ```console
@@ -234,6 +321,14 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     kubectl apply \
       -f ./client/client.yaml \
+      -n llm-d
+    ```
+
+1. Verify that the client pod is deployed.
+
+    ```console
+    kubectl get pod \
+      client \
       -n llm-d
     ```
 

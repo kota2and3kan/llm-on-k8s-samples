@@ -63,6 +63,12 @@ Create a sample LLM infrastructure on Kubernetes with:
     kubectl create ns llm-d
     ```
 
+1. Verify that the namespace `llm-d` is created.
+
+    ```console
+    kubectl get ns llm-d
+    ```
+
 ### Deploy cert-manager
 
 1. Deploy cert-manager as a dependency of KServe.
@@ -77,6 +83,12 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v1.21.3
     ```
 
+1. Verify that cert-manager pods are deployed.
+
+    ```console
+    kubectl get pod -n cert-manager
+    ```
+
 ### Deploy CRDs for Gateway API and Gateway API Inference Extension
 
 1. Deploy CRDs for Gateway API and Gateway API Inference Extension.
@@ -85,6 +97,23 @@ Create a sample LLM infrastructure on Kubernetes with:
     kubectl apply \
       -f ./gateway-api/gateway-api.yaml \
       -f ./gateway-api/gateway-api-inference-extension.yaml
+    ```
+
+1. Verify that CRDs are created.
+
+    ```console
+    kubectl api-resources \
+      --api-group=gateway.networking.k8s.io
+    ```
+
+    ```console
+    kubectl api-resources \
+      --api-group=inference.networking.k8s.io
+    ```
+
+    ```console
+    kubectl api-resources \
+      --api-group=inference.networking.x-k8s.io
     ```
 
 ### Deploy agentgateway as implementation of Gateway (GatewayClass)
@@ -99,6 +128,13 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v1.6.0
     ```
 
+1. Verify that CRDs are created.
+
+    ```console
+    kubectl api-resources \
+      --categories=agentgateway
+    ```
+
 1. Deploy a default configuration for agentgateway.
 
     ```console
@@ -107,7 +143,15 @@ Create a sample LLM infrastructure on Kubernetes with:
       -n agentgateway-system
     ```
 
-1. Deploy agentgateway.
+1. Verify that agentgatewayparameters is created.
+
+    ```console
+    kubectl get agentgatewayparameters \
+      clusterip-by-default \
+      -n agentgateway-system
+    ```
+
+1. Deploy an agentgateway controller.
 
     ```console
     helm install agentgateway \
@@ -117,6 +161,13 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v1.6.0
     ```
 
+1. Verify that the agentgateway controller is deployed.
+
+    ```console
+    kubectl get pod \
+      -n agentgateway-system
+    ```
+
 ### Deploy Gateway
 
 1. Deploy Gateway.
@@ -124,6 +175,20 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     kubectl apply \
       -f ./gateway-api/gateway.yaml \
+      -n llm-d
+    ```
+
+1. Verify that gateway and agentgateway pod are deployed.
+
+    ```console
+    kubectl get gateway \
+      inference-gateway \
+      -n llm-d
+    ```
+
+    ```console
+    kubectl get pod \
+      -l app.kubernetes.io/name=inference-gateway \
       -n llm-d
     ```
 
@@ -181,7 +246,14 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v0.21.0
     ```
 
-1. Deploy KServe resources.
+1. Verify that CRDs are created.
+
+    ```console
+    kubectl api-resources \
+      --api-group=serving.kserve.io
+    ```
+
+1. Deploy a KServe llmisvc controller.
 
     ```console
     helm install kserve-llmisvc-resources \
@@ -192,6 +264,14 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version v0.21.0
     ```
 
+1. Verify that the KServe llmisvc controller is deployed.
+
+    ```console
+    kubectl get pod \
+      -l app.kubernetes.io/name=llmisvc-controller-manager \
+      -n kserve
+    ```
+
 1. Deploy KServe configs.
 
     ```console
@@ -200,6 +280,13 @@ Create a sample LLM infrastructure on Kubernetes with:
       --namespace kserve \
       --set kserve.llmisvcConfigs.enabled=true \
       --version v0.21.0
+    ```
+
+1. Verify that KServe configs are deployed.
+
+    ```console
+    kubectl get llminferenceserviceconfigs \
+      -n kserve
     ```
 
     ```console
@@ -254,6 +341,41 @@ Create a sample LLM infrastructure on Kubernetes with:
       -n llm-d
     ```
 
+1. Verify that the LLMInferenceService resource is deployed.
+
+    ```console
+    kubectl get llmisvc \
+      -n llm-d
+    ```
+
+1. Verify that the vLLM pod is deployed.
+
+    ```console
+    kubectl get pod \
+      -l app.kubernetes.io/component=llminferenceservice-workload \
+      -n llm-d
+    ```
+
+1. Verify that EPP (Endpoint Picker), InferencePool, and HTTPRoute are deployed.
+
+    ```console
+    kubectl get pod \
+      -l app.kubernetes.io/component=llminferenceservice-router-scheduler \
+      -n llm-d
+    ```
+
+    ```console
+    kubectl get inferencepool \
+      smollm2-135m-inference-pool \
+      -n llm-d
+    ```
+
+    ```console
+    kubectl get httproute \
+      smollm2-135m-kserve-route \
+      -n llm-d
+    ```
+
     ```console
     +--[Kubernetes]--------------------------------------+
     |                                                    |
@@ -303,6 +425,14 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     kubectl apply \
       -f ./client/client.yaml \
+      -n llm-d
+    ```
+
+1. Verify that the client pod is deployed.
+
+    ```console
+    kubectl get pod \
+      client \
       -n llm-d
     ```
 
@@ -425,11 +555,25 @@ Create a sample LLM infrastructure on Kubernetes with:
     kubectl create ns kagent
     ```
 
+1. Verify that the namespace `kagent` is created.
+
+    ```console
+    kubectl get ns kagent
+    ```
+
 1. Create a dummy secret.
 
     ```console
     kubectl create secret generic kagent-openai \
       --from-literal=OPENAI_API_KEY='dummy-api-key' \
+      -n kagent
+    ```
+
+1. Verify that the secret is created.
+
+    ```console
+    kubectl get secret \
+      kagent-openai \
       -n kagent
     ```
 
@@ -442,6 +586,13 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version 0.10.3
     ```
 
+1. Verify that CRDs are created.
+
+    ```console
+    kubectl api-resources \
+      --categories=kagent
+    ```
+
 1. Deploy kagent.
 
     ```console
@@ -452,11 +603,26 @@ Create a sample LLM infrastructure on Kubernetes with:
       --version 0.10.3
     ```
 
+1. Verify that kagent is deployed.
+
+    ```console
+    kubectl get pod \
+      -n kagent
+    ```
+
 1. Deploy a sample agent.
 
     ```console
     kubectl apply \
       -f ./kagent/sample-agent.yaml \
+      -n kagent
+    ```
+
+1. Verify that the sample agent is deployed.
+
+    ```console
+    kubectl get agent \
+      sample-agent \
       -n kagent
     ```
 
