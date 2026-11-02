@@ -190,6 +190,12 @@ Create a sample LLM infrastructure on Kubernetes with:
       -n agentgateway-system
     ```
 
+1. Verify that the GatewayClass resource is created.
+
+    ```console
+    kubectl get gatewayclass
+    ```
+
 ### Deploy Gateway
 
 1. Deploy Gateway.
