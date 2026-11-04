@@ -633,6 +633,12 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```
 
     ```console
+    kubectl get pod \
+      -l kagent=sample-agent \
+      -n kagent
+    ```
+
+    ```console
     +--[Kubernetes]--------------------------------------+
     |                                                    |
     |     +---------------+        +---------------+     |
