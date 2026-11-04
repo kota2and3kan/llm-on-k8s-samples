@@ -4,7 +4,7 @@ metadata:
   name: smollm2-135m
 spec:
   model:
-    uri: hf://HuggingFaceTB/SmolLM2-135M-Instruct
+    uri: pvc://model/SmolLM2-135M-Instruct
     name: HuggingFaceTB/SmolLM2-135M-Instruct
   replicas: 1
   labels:

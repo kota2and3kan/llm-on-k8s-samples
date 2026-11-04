@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: download-smollm2-135m
+  namespace: llm-d
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: storage-initializer
+          image: kserve/storage-initializer:v0.21.0
+          args:
+            - hf://HuggingFaceTB/SmolLM2-135M-Instruct
+            - /mnt/models
+          volumeMounts:
+            - name: model
+              mountPath: /mnt/models
+              subPath: SmolLM2-135M-Instruct
+      volumes:
+        - name: model
+          persistentVolumeClaim:
+            claimName: model

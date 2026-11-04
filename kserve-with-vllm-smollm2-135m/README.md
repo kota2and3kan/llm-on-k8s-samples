@@ -75,12 +75,11 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install cert-manager \
-      oci://quay.io/jetstack/charts/cert-manager \
+      ./charts/cert-manager-v1.21.3.tgz \
       --namespace cert-manager \
       --create-namespace \
       --set crds.enabled=true \
-      --set crds.keep=false \
-      --version v1.21.3
+      --set crds.keep=false
     ```
 
 1. Verify that cert-manager pods are deployed.
@@ -122,10 +121,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install agentgateway-crds \
-      oci://cr.agentgateway.dev/charts/agentgateway-crds \
+      ./charts/agentgateway-crds-v1.7.0.tgz \
       --namespace agentgateway-system \
-      --create-namespace \
-      --version v1.7.0
+      --create-namespace
     ```
 
 1. Verify that CRDs are created.
@@ -155,10 +153,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install agentgateway \
-      oci://cr.agentgateway.dev/charts/agentgateway \
+      ./charts/agentgateway-v1.7.0.tgz \
       --namespace agentgateway-system \
-      --values ./agentgateway/agentgateway.yaml \
-      --version v1.7.0
+      --values ./agentgateway/agentgateway.yaml
     ```
 
 1. Verify that the agentgateway controller is deployed.
@@ -246,10 +243,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install kserve-llmisvc-crd \
-      oci://ghcr.io/kserve/charts/kserve-llmisvc-crd \
+      ./charts/kserve-llmisvc-crd-v0.21.0.tgz \
       --namespace kserve \
-      --create-namespace \
-      --version v0.21.0
+      --create-namespace
     ```
 
 1. Verify that CRDs are created.
@@ -263,11 +259,11 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install kserve-llmisvc-resources \
-      oci://ghcr.io/kserve/charts/kserve-llmisvc-resources \
+      ./charts/kserve-llmisvc-resources-v0.21.0.tgz \
       --namespace kserve \
       --set kserve.llmisvc.createGIECRDs=false \
-      --wait \
-      --version v0.21.0
+      --set kserve.llmisvc.controller.imagePullPolicy=IfNotPresent \
+      --wait
     ```
 
 1. Verify that the KServe llmisvc controller is deployed.
@@ -282,10 +278,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install kserve-runtime-configs \
-      oci://ghcr.io/kserve/charts/kserve-runtime-configs \
+      ./charts/kserve-runtime-configs-v0.21.0.tgz \
       --namespace kserve \
-      --set kserve.llmisvcConfigs.enabled=true \
-      --version v0.21.0
+      --set kserve.llmisvcConfigs.enabled=true
     ```
 
 1. Verify that KServe configs are deployed.
@@ -587,9 +582,8 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install kagent-crds \
-      oci://ghcr.io/kagent-dev/kagent/helm/kagent-crds \
-      --namespace kagent \
-      --version 0.10.4
+      ./charts/kagent-crds-0.10.4.tgz \
+      --namespace kagent
     ```
 
 1. Verify that CRDs are created.
@@ -603,10 +597,9 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     helm install kagent \
-      oci://ghcr.io/kagent-dev/kagent/helm/kagent \
+      ./charts/kagent-0.10.4.tgz \
       --namespace kagent \
-      --values ./kagent/kagent.yaml \
-      --version 0.10.4
+      --values ./kagent/kagent.yaml
     ```
 
 1. Verify that kagent is deployed.
@@ -775,3 +768,36 @@ kubectl delete ns \
   cert-manager \
   llm-d
 ```
+
+## Appendix
+
+1. Run the `kubectl port-forward` command.
+
+    ```console
+    kubectl port-forward \
+      pod/$(kubectl get pod -l app.kubernetes.io/name=inference-gateway -o jsonpath='{.items[0].metadata.name}' -n llm-d) \
+      15000:15000 \
+      -n llm-d
+    ```
+
+1. Access http://localhost:15000/.
+
+1. Sample request for CEL Playground.
+
+    ```yaml
+    request:
+      method: POST
+      path: /v1/chat/completions
+      host: example.com
+      headers:
+        authorization: Bearer <token>
+    jwt:
+      iss: https://idp.example.com
+      sub: alice
+    ```
+
+1. Sample expression .
+
+    ```console
+    jwt.iss == "https://idp.example.com" && jwt.sub == "alice"
+    ```
