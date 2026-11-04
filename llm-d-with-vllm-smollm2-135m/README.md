@@ -163,7 +163,7 @@ Create a sample LLM infrastructure on Kubernetes with:
       oci://cr.agentgateway.dev/charts/agentgateway-crds \
       --namespace agentgateway-system \
       --create-namespace \
-      --version v1.6.0
+      --version v1.7.0
     ```
 
 1. Verify that CRDs are created.
@@ -196,7 +196,7 @@ Create a sample LLM infrastructure on Kubernetes with:
       oci://cr.agentgateway.dev/charts/agentgateway \
       --namespace agentgateway-system \
       --values ./agentgateway/agentgateway.yaml \
-      --version v1.6.0
+      --version v1.7.0
     ```
 
 1. Verify that the agentgateway controller is deployed.

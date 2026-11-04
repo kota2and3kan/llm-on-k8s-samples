@@ -125,7 +125,7 @@ Create a sample LLM infrastructure on Kubernetes with:
       oci://cr.agentgateway.dev/charts/agentgateway-crds \
       --namespace agentgateway-system \
       --create-namespace \
-      --version v1.6.0
+      --version v1.7.0
     ```
 
 1. Verify that CRDs are created.
@@ -158,7 +158,7 @@ Create a sample LLM infrastructure on Kubernetes with:
       oci://cr.agentgateway.dev/charts/agentgateway \
       --namespace agentgateway-system \
       --values ./agentgateway/agentgateway.yaml \
-      --version v1.6.0
+      --version v1.7.0
     ```
 
 1. Verify that the agentgateway controller is deployed.
@@ -589,7 +589,7 @@ Create a sample LLM infrastructure on Kubernetes with:
     helm install kagent-crds \
       oci://ghcr.io/kagent-dev/kagent/helm/kagent-crds \
       --namespace kagent \
-      --version 0.10.3
+      --version 0.10.4
     ```
 
 1. Verify that CRDs are created.
@@ -606,7 +606,7 @@ Create a sample LLM infrastructure on Kubernetes with:
       oci://ghcr.io/kagent-dev/kagent/helm/kagent \
       --namespace kagent \
       --values ./kagent/kagent.yaml \
-      --version 0.10.3
+      --version 0.10.4
     ```
 
 1. Verify that kagent is deployed.
