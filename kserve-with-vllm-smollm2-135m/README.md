@@ -14,15 +14,11 @@ Create a sample LLM infrastructure on Kubernetes with:
 ```console
 +--[Kubernetes]--------------------------------------+
 |                                                    |
-|     +---------------+        +---------------+     |
-|     |     curl      |        |     kagent    |     |
-|     +------+--------+        +--------+------+     |
-|            |                          |            |
-|            +------------+-------------+            |
-|                         |                          |
-|                  (Run OpenAI API)                  |
-|                         |                          |
-|            +------------+                          |
+|     +---------------+                              |
+|     |    kagent     |                              |
+|     +------+--------+                              |
+|            |                                       |
+|     (Run OpenAI API)                               |
 |            |                                       |
 |  +---------+------------------------------------+  |
 |  |         |    [KServe (LLMInferenceService)]  |  |
@@ -210,10 +206,6 @@ Create a sample LLM infrastructure on Kubernetes with:
     |                                                    |
     |                                                    |
     |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
     |        +--------------+                            |
     |        | agentgateway |                            |
     |        +--------------+                            |
@@ -292,10 +284,6 @@ Create a sample LLM infrastructure on Kubernetes with:
 
     ```console
     +--[Kubernetes]--------------------------------------+
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
     |                                                    |
     |                                                    |
     |                                                    |
@@ -386,10 +374,6 @@ Create a sample LLM infrastructure on Kubernetes with:
     |                                                    |
     |                                                    |
     |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
     |  +----------------------------------------------+  |
     |  |              [KServe (LLMInferenceService)]  |  |
     |  |                                              |  |
@@ -407,135 +391,6 @@ Create a sample LLM infrastructure on Kubernetes with:
     |  |  +----------------------------------------+  |  |
     |  |  |                      [Inference Pool]  |  |  |
     |  |  |                                        |  |  |
-    |  |  |            +--------------+            |  |  |
-    |  |  |            | vLLM         |            |  |  |
-    |  |  |            | SmolLM2-135M |            |  |  |
-    |  |  |            +--------------+            |  |  |
-    |  |  |                                        |  |  |
-    |  |  +----------------------------------------+  |  |
-    |  |                                              |  |
-    |  +----------------------------------------------+  |
-    |                                                    |
-    +----------------------------------------------------+
-    ```
-
-### Deploy a client pod
-
-1. Deploy a client pod.
-
-    ```console
-    kubectl apply \
-      -f ./client/client.yaml \
-      -n llm-d
-    ```
-
-1. Verify that the client pod is deployed.
-
-    ```console
-    kubectl get pod \
-      client \
-      -n llm-d
-    ```
-
-    ```console
-    +--[Kubernetes]--------------------------------------+
-    |                                                    |
-    |     +---------------+                              |
-    |     |     curl      |                              |
-    |     +---------------+                              |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |                                                    |
-    |  +----------------------------------------------+  |
-    |  |              [KServe (LLMInferenceService)]  |  |
-    |  |                                              |  |
-    |  |  +----------------------------------------+  |  |
-    |  |  |                        [llm-d Router]  |  |  |
-    |  |  |                                        |  |  |
-    |  |  |  +--------------+    +--------------+  |  |  |
-    |  |  |  | agentgateway |    |  llm-d EPP   |  |  |  |
-    |  |  |  +--------------+    +--------------+  |  |  |
-    |  |  |                                        |  |  |
-    |  |  +----------------------------------------+  |  |
-    |  |                                              |  |
-    |  |                                              |  |
-    |  |                                              |  |
-    |  |  +----------------------------------------+  |  |
-    |  |  |                      [Inference Pool]  |  |  |
-    |  |  |                                        |  |  |
-    |  |  |            +--------------+            |  |  |
-    |  |  |            | vLLM         |            |  |  |
-    |  |  |            | SmolLM2-135M |            |  |  |
-    |  |  |            +--------------+            |  |  |
-    |  |  |                                        |  |  |
-    |  |  +----------------------------------------+  |  |
-    |  |                                              |  |
-    |  +----------------------------------------------+  |
-    |                                                    |
-    +----------------------------------------------------+
-    ```
-
-### Run sample requests
-
-1. Run a shell in the client pod.
-
-    ```console
-    kubectl exec -it client -n llm-d -- bash
-    ```
-
-1. Check models.
-
-    ```console
-    curl -s http://inference-gateway.llm-d.svc.cluster.local/llm-d/smollm2-135m/v1/models | jq .
-    ```
-
-1. Say "Hello!".
-
-    ```console
-    curl -s http://inference-gateway.llm-d.svc.cluster.local/llm-d/smollm2-135m/v1/chat/completions \
-      -H 'Content-Type: application/json' \
-      -d '{
-        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
-        "messages": [{"role": "user", "content": "Hello!"}],
-        "max_tokens": 50
-      }' | jq
-    ```
-    Note: It may take a bit of time to return a response since this sample uses vLLM with CPU for inference.
-
-    ```console
-    +--[Kubernetes]--------------------------------------+
-    |                                                    |
-    |     +---------------+                              |
-    |     |     curl      |                              |
-    |     +------+--------+                              |
-    |            |                                       |
-    |            +------------+                          |
-    |                         |                          |
-    |                  (Run OpenAI API)                  |
-    |                         |                          |
-    |            +------------+                          |
-    |            |                                       |
-    |  +---------+------------------------------------+  |
-    |  |         |    [KServe (LLMInferenceService)]  |  |
-    |  |         |                                    |  |
-    |  |  +------+---------------------------------+  |  |
-    |  |  |      |                 [llm-d Router]  |  |  |
-    |  |  |      V                                 |  |  |
-    |  |  |  +---+----------+    +--------------+  |  |  |
-    |  |  |  | agentgateway |--->|  llm-d EPP   |  |  |  |
-    |  |  |  +---+----------+    +--------------+  |  |  |
-    |  |  |      |                                 |  |  |
-    |  |  +------+---------------------------------+  |  |
-    |  |         |                                    |  |
-    |  |         +------------+                       |  |
-    |  |                      |                       |  |
-    |  |  +-------------------+--------------------+  |  |
-    |  |  |                   |  [Inference Pool]  |  |  |
-    |  |  |                   V                    |  |  |
     |  |  |            +--------------+            |  |  |
     |  |  |            | vLLM         |            |  |  |
     |  |  |            | SmolLM2-135M |            |  |  |
@@ -634,15 +489,11 @@ Create a sample LLM infrastructure on Kubernetes with:
     ```console
     +--[Kubernetes]--------------------------------------+
     |                                                    |
-    |     +---------------+        +---------------+     |
-    |     |     curl      |        |     kagent    |     |
-    |     +------+--------+        +--------+------+     |
-    |            |                          |            |
-    |            +------------+-------------+            |
-    |                         |                          |
-    |                  (Run OpenAI API)                  |
-    |                         |                          |
-    |            +------------+                          |
+    |     +---------------+                              |
+    |     |    kagent     |                              |
+    |     +------+--------+                              |
+    |            |                                       |
+    |     (Run OpenAI API)                               |
     |            |                                       |
     |  +---------+------------------------------------+  |
     |  |         |    [KServe (LLMInferenceService)]  |  |
@@ -702,11 +553,6 @@ helm uninstall \
 kubectl delete secrets \
   kagent-openai \
   -n kagent
-```
-```console
-kubectl delete \
-  -f ./client/client.yaml \
-  -n llm-d
 ```
 ```console
 kubectl delete \
@@ -796,7 +642,7 @@ kubectl delete ns \
       sub: alice
     ```
 
-1. Sample expression .
+1. Sample expression.
 
     ```console
     jwt.iss == "https://idp.example.com" && jwt.sub == "alice"
